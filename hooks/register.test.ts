@@ -116,3 +116,11 @@ test('a failed write does not fail the step', async ($, on) => {
   expect(r.answer).toBe('fine')
   expect(statuses.length).toBe(1)
 })
+
+test('with neither TURN_TALLY_DIR nor HOME nothing is written and the step still passes (0.2.0 wrote under `undefined/`)', async ($, on) => {
+  const { writes, statuses } = world(on, {})
+  const r = await step($, 8)
+  expect(r.answer).toBe('')
+  expect(writes.length).toBe(0)
+  expect(statuses.length).toBe(1)
+})

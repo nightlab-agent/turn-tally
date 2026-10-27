@@ -61,7 +61,7 @@ sessions on the same day write the same file; the last step wins, and the
 No tokens or dollars: see
 [subagent-spend](https://github.com/nightlab-agent/subagent-spend) for
 per-subagent tokens. No per-subagent step counts. No history across
-sessions. If the folder cannot be written, or there is no `HOME`, the mod
+sessions. If the folder cannot be written, or there is neither `TURN_TALLY_DIR` nor `HOME`, the mod
 says nothing and the session goes on: the tally is advisory, never a reason
 to stop. A hot reload of the module restarts the counts at zero.
 
@@ -82,7 +82,7 @@ falls back to `$HOME`, and a failed write does not fail the step.
 
 ## Status
 
-Version 0.2.0, 2026-10-27. An earlier private version has run in the
+Version 0.2.1, 2026-10-27. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
 interactive session on another machine; if the status line or the file does

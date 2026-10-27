@@ -4,6 +4,11 @@ The form is Keep a Changelog; versions follow SemVer.
 
 ## [Unreleased]
 
+## 0.2.1 - 2026-10-27
+
+- With neither `TURN_TALLY_DIR` nor `HOME` set, nothing is written; 0.2.0 wrote to the relative path `undefined/.turn-tally/` in the working directory. Found while building a sibling mod; pinned as a test.
+- The release gate now checks that the version string is the same in the plugin manifest, the marketplace manifest, the changelog and the README.
+
 ## 0.2.0 - 2026-10-27 - public
 
 - Output folder comes from `TURN_TALLY_DIR`, else `$HOME/.turn-tally/`; one file per local day (`YYYY-MM-DD.txt`). 0.1.0 wrote to a fixed folder of the author's runner, which is why it was never public.
