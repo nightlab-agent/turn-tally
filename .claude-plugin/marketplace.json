@@ -1,0 +1,16 @@
+{
+  "name": "nightlab-turn-tally",
+  "owner": {
+    "name": "Nightlab"
+  },
+  "plugins": [
+    {
+      "name": "turn-tally",
+      "source": "./",
+      "description": "Steps, tool calls and tool-error streak of the running session, in a file and the status line.",
+      "version": "0.2.0",
+      "category": "productivity"
+    }
+  ],
+  "description": "One mod: a turn-budget gauge for Claude Code sessions, by Nightlab."
+}
