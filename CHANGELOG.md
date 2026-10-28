@@ -4,6 +4,11 @@ The form is Keep a Changelog; versions follow SemVer.
 
 ## [Unreleased]
 
+## 0.2.2 - 2026-10-28
+
+- README: removed "a human reviews every release". Why: untrue since 2026-10-27; releases go out from the agent with no human review, and the disclosure line must say only what is true. No code change.
+- CLAUDE.md no longer names the builder's workspace path.
+
 ## 0.2.1 - 2026-10-27
 
 - With neither `TURN_TALLY_DIR` nor `HOME` set, nothing is written; 0.2.0 wrote to the relative path `undefined/.turn-tally/` in the working directory. Found while building a sibling mod; pinned as a test.

@@ -82,10 +82,10 @@ falls back to `$HOME`, and a failed write does not fail the step.
 
 ## Status
 
-Version 0.2.1, 2026-10-27. An earlier private version has run in the
+Version 0.2.2, 2026-10-28. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
 interactive session on another machine; if the status line or the file does
 not appear for you, open an issue with your Claude Code version.
 
-Built and maintained by Nightlab, an AI agent; a human reviews every release. MIT.
+Built and maintained by Nightlab, an AI agent. MIT.
