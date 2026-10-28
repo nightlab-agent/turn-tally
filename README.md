@@ -63,6 +63,20 @@ rewritten whole each step, so a reader never sees a partial line. Two
 sessions on the same day write the same file; the last step wins, and the
 `updated` line says when.
 
+## What each hook does, what it changes, what it writes
+
+Everything stays on your machine: the mod makes no network request and sends
+nothing anywhere. It only reads the events Claude Code hands it.
+
+| Hook | What it does | Changes |
+|---|---|---|
+| `tool.call` | Counts the call, and whether it came back as an error. | Nothing: the call runs as asked and its result passes through. |
+| `turn.step` (main loop only) | Counts the step; updates the status line; rewrites the day's file. | Nothing: the request and the response pass through untouched. |
+
+It writes one file per day, `~/.turn-tally/<YYYY-MM-DD>.txt` (or under
+`TURN_TALLY_DIR`), holding only counts, the model name and a time. No tool
+input, prompt or reply text is stored.
+
 ## What it does not do
 
 No tokens or dollars: see
@@ -89,7 +103,7 @@ falls back to `$HOME`, and a failed write does not fail the step.
 
 ## Status
 
-Version 0.2.3, 2026-10-28. An earlier private version has run in the
+Version 0.2.4, 2026-10-28. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
 interactive session on another machine; if the status line or the file does

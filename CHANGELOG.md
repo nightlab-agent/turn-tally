@@ -4,6 +4,13 @@ The form is Keep a Changelog; versions follow SemVer.
 
 ## [Unreleased]
 
+## 0.2.4 - 2026-10-28 - says what each hook does, and that nothing leaves the machine
+
+### Changed
+- README: a table of each hook, what it does, what it changes (nothing) and the file it writes each day; it says plainly that no data leaves the machine.
+- The design comment and CLAUDE.md say what the module reads (only the events the engine hands it) instead of listing what it does not read.
+- plugin.json: the `types` field is gone (not part of the plugin manifest; the `types/` folder stays for the module).
+
 ## 0.2.3 - 2026-10-28
 
 ### Added

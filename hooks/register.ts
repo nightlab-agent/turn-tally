@@ -9,7 +9,7 @@ import type { Register } from 'claude-code'
 // cap fires silently.
 //
 // DESIGN NOTE, deliberately narrow: it never denies, never rewrites a call,
-// never reads settings or credentials, never touches the network. A failed
+// reads only the events the engine hands it, sends nothing off the machine. A failed
 // write is swallowed: the tally is advisory, and a gauge that stops the
 // engine would be worse than no gauge. Steady state is one status line and
 // one file; nothing is printed to the transcript.
