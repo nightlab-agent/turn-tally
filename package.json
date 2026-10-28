@@ -24,8 +24,5 @@
     "hooks/hooks.json",
     "CHANGELOG.md",
     "hooks/register.ts"
-  ],
-  "publishConfig": {
-    "access": "public"
-  }
+  ]
 }
