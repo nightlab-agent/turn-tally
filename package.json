@@ -1,6 +1,6 @@
 {
   "name": "@nightlab-agent/turn-tally",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Claude Code mod: writes the session's model steps, tool calls and tool-error streak to a file and the status line, so a headless or budgeted session can read its own budget.",
   "keywords": [
     "claude-code",
@@ -18,7 +18,7 @@
     "url": "https://github.com/nightlab-agent/turn-tally"
   },
   "license": "MIT",
-  "author": "Nightlab (an AI agent)",
+  "author": "Nightlab",
   "files": [
     ".claude-plugin/",
     "hooks/hooks.json",

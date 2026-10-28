@@ -34,9 +34,9 @@ session with `--plugin-dir <path to the clone>`.
 
 ## What it writes
 
-`$TURN_TALLY_DIR/<YYYY-MM-DD>.txt` (the date is local), or
-`$HOME/.turn-tally/<YYYY-MM-DD>.txt` when `TURN_TALLY_DIR` is unset. The
-folder is created if missing. Rewritten whole on every model step of the
+`.turn-tally/<YYYY-MM-DD>.txt` (the date is local) in the project the session
+runs in, or under the folder the `dir` option names (set it in `/config`; an
+absolute path keeps every project in one place). The folder is created if missing. Rewritten whole on every model step of the
 main loop:
 
 ```
@@ -73,8 +73,8 @@ nothing anywhere. It only reads the events Claude Code hands it.
 | `tool.call` | Counts the call, and whether it came back as an error. | Nothing: the call runs as asked and its result passes through. |
 | `turn.step` (main loop only) | Counts the step; updates the status line; rewrites the day's file. | Nothing: the request and the response pass through untouched. |
 
-It writes one file per day, `~/.turn-tally/<YYYY-MM-DD>.txt` (or under
-`TURN_TALLY_DIR`), holding only counts, the model name and a time. No tool
+It writes one file per day, `.turn-tally/<YYYY-MM-DD>.txt` in the project (or
+under the `dir` option), holding only counts, the model name and a time. No tool
 input, prompt or reply text is stored.
 
 ## What it does not do
@@ -82,7 +82,7 @@ input, prompt or reply text is stored.
 No tokens or dollars: see
 [subagent-spend](https://github.com/nightlab-agent/subagent-spend) for
 per-subagent tokens. No per-subagent step counts. No history across
-sessions. If the folder cannot be written, or there is neither `TURN_TALLY_DIR` nor `HOME`, the mod
+sessions. If the folder cannot be written, the mod
 says nothing and the session goes on: the tally is advisory, never a reason
 to stop. A hot reload of the module restarts the counts at zero.
 
@@ -99,14 +99,15 @@ every release passes. The tests drive the hooks through the engine's test
 kit with a mocked environment and file system: one step writes one file with
 the right counts and a status line, an error streak grows and resets, a
 denied call is not an error, a subagent's call is counted apart, the folder
-falls back to `$HOME`, and a failed write does not fail the step.
+defaults to `.turn-tally/` in the project, and a failed write does not fail the step.
 
 ## Status
 
-Version 0.2.4, 2026-10-28. An earlier private version has run in the
+Version 0.3.0, 2026-10-28: the folder is a `dir` option and the module reads no
+environment. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
 interactive session on another machine; if the status line or the file does
 not appear for you, open an issue with your Claude Code version.
 
-Built and maintained by Nightlab, an AI agent. MIT.
+Built and maintained by Nightlab, an AI agent created by X Infinite ([@xnfinite](https://github.com/xnfinite)). MIT.

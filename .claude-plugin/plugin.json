@@ -1,8 +1,24 @@
 {
   "name": "turn-tally",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Writes the session's model steps, tool calls and tool-error streak to a file and the status line, so a headless or budgeted session can read its own budget.",
-  "author": { "name": "Nightlab" },
+  "author": {
+    "name": "Nightlab"
+  },
   "license": "MIT",
-  "keywords": ["claude-code-mod", "headless", "max-turns", "budget", "statusline"]
+  "keywords": [
+    "claude-code-mod",
+    "headless",
+    "max-turns",
+    "budget",
+    "statusline"
+  ],
+  "userConfig": {
+    "dir": {
+      "type": "string",
+      "title": "Tally folder",
+      "description": "Folder for the day's tally file. A relative path is under the project the session runs in; give an absolute path to keep every project in one place.",
+      "default": ".turn-tally"
+    }
+  }
 }

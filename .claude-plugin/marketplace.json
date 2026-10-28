@@ -8,7 +8,7 @@
       "name": "turn-tally",
       "source": "./",
       "description": "Steps, tool calls and tool-error streak of the running session, in a file and the status line.",
-      "version": "0.2.4",
+      "version": "0.3.0",
       "category": "productivity"
     }
   ],

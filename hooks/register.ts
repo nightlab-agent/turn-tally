@@ -41,17 +41,9 @@ export const tallyText = (model: string, messageCount: number, now: Date) =>
     '',
   ].join('\n')
 
-/** Where the file goes: TURN_TALLY_DIR, else $HOME/.turn-tally, else nowhere. */
-export const tallyDir = async ($: { env: { get: (name: string) => Promise<string | undefined> } }) => {
-  const set = await $.env.get('TURN_TALLY_DIR')
-  if (set) return set
-  const home = await $.env.get('HOME')
-  return home ? `${home}/.turn-tally` : undefined
-}
-
 export const statusText = () => `steps ${steps} | tools ${toolCalls} | errors ${toolErrors} (streak ${streak})`
 
-export const register: Register = on => {
+export const register: Register = (on, options) => {
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (e.agentId) {
@@ -80,10 +72,9 @@ export const register: Register = on => {
       // a surface with no status line; the file still gets written
     }
     try {
-      const dir = await tallyDir($)
-      // No TURN_TALLY_DIR and no HOME: nothing to write under. 0.2.0 wrote to the
-      // relative path `undefined/.turn-tally/`; now the step passes with the status line.
-      if (dir !== undefined) await $.fs.write(`${dir}/${localDay(now)}.txt`, tallyText(e.model, e.messageCount, now))
+      // The `dir` option; a relative folder is under the project the session runs in.
+      const dir = String(options.dir || '.turn-tally')
+      await $.fs.write(`${dir}/${localDay(now)}.txt`, tallyText(e.model, e.messageCount, now))
     } catch {
       // unwritable folder: the tally is advisory, the session goes on
     }

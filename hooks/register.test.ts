@@ -1,17 +1,16 @@
 import { expect, mock, test } from 'claude-code/testing'
 
 // Each test stands for the engine beneath the plugin: it answers `$.fs.write`,
-// `$.ui.status` and `$.env.get`, raises tool calls and turn steps, and reads
+// and `$.ui.status`, raises tool calls and turn steps, and reads
 // what the plugin wrote. Nothing here touches the real file system.
 // Counts are module variables of the plugin and carry across the tests in
 // one run, so each test asserts on deltas or on the lines it can own.
 
 type Written = { path: string; text: string }
 
-const world = (on: Parameters<Parameters<typeof test>[1]>[1], env: Record<string, string>) => {
+const world = (on: Parameters<Parameters<typeof test>[1]>[1]) => {
   const writes: Written[] = []
   const statuses: (string | undefined)[] = []
-  mock.env(on, env)
   on('fs.write', (_, e) => {
     writes.push({ path: e.path, text: e.text })
     return { value: undefined }
@@ -37,8 +36,8 @@ const step = async ($: Parameters<Parameters<typeof test>[1]>[0], index: number,
 
 const line = (text: string, name: string) => text.split('\n').find(l => l.startsWith(name)) ?? ''
 
-test('one main-loop step writes one file under TURN_TALLY_DIR with the counts, and a status line', async ($, on) => {
-  const { writes, statuses } = world(on, { TURN_TALLY_DIR: '/tally', HOME: '/home/someone' })
+test('one main-loop step writes one file under the dir option with the counts, and a status line', { options: { dir: '/tally' } }, async ($, on) => {
+  const { writes, statuses } = world(on)
   on('tool.call', () => ({ result: {} }))
 
   await $.tool.call({ tool: 'Bash', command: 'ls' })
@@ -55,7 +54,7 @@ test('one main-loop step writes one file under TURN_TALLY_DIR with the counts, a
 })
 
 test('an errored tool result counts and extends the streak; a success resets it; a denied call is not an error', async ($, on) => {
-  const { writes } = world(on, { TURN_TALLY_DIR: '/tally', HOME: '/home/someone' })
+  const { writes } = world(on)
   let answer: 'ok' | 'error' | 'deny' = 'ok'
   on('tool.call', () => (answer === 'deny' ? { deny: 'not here' } : answer === 'error' ? { result: {}, isError: true } : { result: {} }))
 
@@ -80,7 +79,7 @@ test('an errored tool result counts and extends the streak; a success resets it;
 })
 
 test("a subagent's tool call and step are counted apart and write nothing", async ($, on) => {
-  const { writes } = world(on, { TURN_TALLY_DIR: '/tally', HOME: '/home/someone' })
+  const { writes } = world(on)
   on('tool.call', () => ({ result: {} }))
 
   const before = writes.length
@@ -93,15 +92,15 @@ test("a subagent's tool call and step are counted apart and write nothing", asyn
   expect(/\(subagents 1\)$/.test(calls)).toBe(true)
 })
 
-test('without TURN_TALLY_DIR the file goes under $HOME/.turn-tally/', async ($, on) => {
-  const { writes } = world(on, { HOME: '/home/someone' })
+test('with no folder set the file goes under .turn-tally/ in the project', async ($, on) => {
+  const { writes } = world(on)
   await step($, 6)
-  expect(writes.at(-1)!.path.startsWith('/home/someone/.turn-tally/')).toBe(true)
+  // The engine resolves a relative path against the session's folder.
+  expect(writes.at(-1)!.path).toMatch(/^\/.*\/\.turn-tally\/\d{4}-\d{2}-\d{2}\.txt$/)
 })
 
 test('a failed write does not fail the step', async ($, on) => {
   const statuses: (string | undefined)[] = []
-  mock.env(on, { TURN_TALLY_DIR: '/nowhere' })
   on('fs.write', () => {
     throw new Error('read-only file system')
   })
@@ -114,13 +113,5 @@ test('a failed write does not fail the step', async ($, on) => {
   })
   const r = await step($, 7)
   expect(r.answer).toBe('fine')
-  expect(statuses.length).toBe(1)
-})
-
-test('with neither TURN_TALLY_DIR nor HOME nothing is written and the step still passes (0.2.0 wrote under `undefined/`)', async ($, on) => {
-  const { writes, statuses } = world(on, {})
-  const r = await step($, 8)
-  expect(r.answer).toBe('')
-  expect(writes.length).toBe(0)
   expect(statuses.length).toBe(1)
 })
