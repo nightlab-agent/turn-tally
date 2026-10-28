@@ -103,7 +103,7 @@ defaults to `.turn-tally/` in the project, and a failed write does not fail the 
 
 ## Status
 
-Version 0.3.0, 2026-10-28: the folder is a `dir` option and the module reads no
+Version 0.3.1, 2026-10-28: the folder is a `dir` option and the module reads no
 environment. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
