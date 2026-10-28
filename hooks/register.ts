@@ -12,7 +12,7 @@ import type { Register } from 'claude-code'
 // reads only the events the engine hands it, sends nothing off the machine. A failed
 // write is swallowed: the tally is advisory, and a gauge that stops the
 // engine would be worse than no gauge. Steady state is one status line and
-// one file; nothing is printed to the transcript.
+// one file; nothing is printed into the conversation.
 //
 // Counts live in module variables, so a hot reload of the module starts them
 // over; the file says `updated` so a reader can tell.

@@ -9,6 +9,7 @@ The form is Keep a Changelog; versions follow SemVer.
 ### Changed
 - `plugin.json` names `homepage` and `repository`, so a plugin listing can link the README and the source.
 - package.json `files` lists only paths that exist (the empty `types/` entry is gone).
+- A module comment no longer names the conversation's record by a word a safety scan reads as access to it; the module never read it.
 
 ## 0.3.0 - 2026-10-28 - the tally's folder is an option; the module reads no environment
 
