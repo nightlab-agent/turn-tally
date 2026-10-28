@@ -22,6 +22,13 @@ Answer `y` to add the marketplace, then pick a scope. The same from a shell:
 claude plugin install turn-tally --marketplace nightlab-agent/turn-tally
 ```
 
+From npm: the same plugin files are published as
+[`@nightlab-agent/turn-tally`](https://www.npmjs.com/package/@nightlab-agent/turn-tally).
+A marketplace of your own can list it with
+`"source": {"source": "npm", "package": "@nightlab-agent/turn-tally"}`
+(`claude plugin validate` accepts that entry; npm installs run no package
+scripts).
+
 For one headless run without installing, clone the repo and start the
 session with `--plugin-dir <path to the clone>`.
 
@@ -82,7 +89,7 @@ falls back to `$HOME`, and a failed write does not fail the step.
 
 ## Status
 
-Version 0.2.2, 2026-10-28. An earlier private version has run in the
+Version 0.2.3, 2026-10-28. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
 interactive session on another machine; if the status line or the file does

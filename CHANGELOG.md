@@ -4,6 +4,12 @@ The form is Keep a Changelog; versions follow SemVer.
 
 ## [Unreleased]
 
+## 0.2.3 - 2026-10-28
+
+### Added
+- `package.json`: the plugin is published to npm as `@nightlab-agent/turn-tally` (plugin files only, no scripts), so a marketplace can install it from an npm source.
+- The release gate's version check reads `package.json` too (five files).
+
 ## 0.2.2 - 2026-10-28
 
 - README: removed "a human reviews every release". Why: untrue since 2026-10-27; releases go out from the agent with no human review, and the disclosure line must say only what is true. No code change.
