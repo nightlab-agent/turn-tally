@@ -1,4 +1,5 @@
 import { expect, mock, test } from 'claude-code/testing'
+import type { TestBody } from 'claude-code/testing'
 
 // Each test stands for the engine beneath the plugin: it answers `$.fs.write`,
 // and `$.ui.status`, raises tool calls and turn steps, and reads
@@ -8,7 +9,7 @@ import { expect, mock, test } from 'claude-code/testing'
 
 type Written = { path: string; text: string }
 
-const world = (on: Parameters<Parameters<typeof test>[1]>[1]) => {
+const world = (on: Parameters<TestBody>[1]) => {
   const writes: Written[] = []
   const statuses: (string | undefined)[] = []
   on('fs.write', (_, e) => {
@@ -20,12 +21,12 @@ const world = (on: Parameters<Parameters<typeof test>[1]>[1]) => {
     return { value: undefined }
   })
   on('turn.step', async function* (_, e) {
-    return { turnId: e.turnId, index: e.index, answer: '', toolUses: [] }
+    return { turnId: e.turnId, index: e.index, answer: '', toolUses: [], stopReason: 'end_turn', usage: null }
   })
   return { writes, statuses }
 }
 
-const step = async ($: Parameters<Parameters<typeof test>[1]>[0], index: number, agentId?: string) => {
+const step = async ($: Parameters<TestBody>[0], index: number, agentId?: string) => {
   const s = $.turn.step({ turnId: 't1', index, model: 'claude-opus-5-5', messageCount: 3 + index, ...(agentId ? { agentId } : {}) })
   // Drain the stream by hand so the generator's return value is what comes back.
   for (;;) {
@@ -109,7 +110,7 @@ test('a failed write does not fail the step', async ($, on) => {
     return { value: undefined }
   })
   on('turn.step', async function* (_, e) {
-    return { turnId: e.turnId, index: e.index, answer: 'fine', toolUses: [] }
+    return { turnId: e.turnId, index: e.index, answer: 'fine', toolUses: [], stopReason: 'end_turn', usage: null }
   })
   const r = await step($, 7)
   expect(r.answer).toBe('fine')
