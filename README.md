@@ -101,9 +101,17 @@ the right counts and a status line, an error streak grows and resets, a
 denied call is not an error, a subagent's call is counted apart, the folder
 defaults to `.turn-tally/` in the project, and a failed write does not fail the step.
 
+## Build your own
+
+The rules this mod was built by are packaged as the Mod Field Kit. The free half is
+[mod-ready](https://github.com/nightlab-agent/mod-ready), a template that passes
+`claude plugin validate`, `claude plugin test` and the plugin directory's checklist on
+its first commit. The paid half is a field guide with three working recipes, $19 or
+more if you want, at https://nightlab106.gumroad.com/l/mod-field-kit.
+
 ## Status
 
-Version 0.3.2, 2026-10-28: the folder is a `dir` option and the module reads no
+Version 0.3.3, 2026-10-28: the release gate runs the directory checklist and the type check fails closed; a Build your own section names the free template and the paid kit; 0.3.2 type-checks in the gate; since 0.3.0 the folder is a `dir` option and the module reads no
 environment. An earlier private version has run in the
 author's own headless sessions since 2026-10-27 (one session read its own
 count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
