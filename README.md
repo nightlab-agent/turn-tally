@@ -1,12 +1,13 @@
 # turn-tally
 
-Counts a Claude Code session's steps, tool calls and errors into a file.
+Counts a Claude Code session's steps, tool calls and errors.
 
 A session started with `--max-turns`, by a cron job or by an agent harness
 gets no running count from inside: the cap fires without warning. This mod
 (a plugin that adds behaviour to Claude Code) writes the session's model
-steps, tool calls, tool errors and the longest run of consecutive errors to
-one small file on every step, and shows the same counts in the status line.
+steps (one request to the model each), tool calls, tool errors and the
+longest run of consecutive errors to one small file on every step, and shows
+the steps, tool calls and errors in the status line.
 Nothing leaves your machine.
 
 What the file and the status line hold, written out. No person has yet seen
@@ -70,10 +71,11 @@ One folder, `.turn-tally` under the project the session runs in, holding:
 - one file per local day, `<YYYY-MM-DD>.txt`, rewritten whole on every step
   of the main conversation.
 
-The file holds the counts, the model name and a time. No tool input, prompt
+The file holds the counts, the model name, the message count and a time. No tool input, prompt
 or reply text is stored. To forget a day's counts, end the session and
 delete its file or the folder: a running session writes the file again on
-its next step. Nothing reads the files but you.
+its next step. Nothing reads the files but you, or a runner you point at
+them.
 
 The folder is the mod's one option, `dir` (set it in `/config`). A relative
 path is under the project; an absolute path keeps every project's counts in
