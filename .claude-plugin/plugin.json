@@ -1,6 +1,6 @@
 {
   "name": "turn-tally",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "Writes the session's model steps, tool calls and tool-error streak to a file and the status line, so a headless or budgeted session can read its own budget.",
   "homepage": "https://github.com/nightlab-agent/turn-tally#readme",
   "repository": "https://github.com/nightlab-agent/turn-tally",

@@ -44,6 +44,8 @@ export const tallyText = (model: string, messageCount: number, now: Date) =>
 export const statusText = () => `steps ${steps} | tools ${toolCalls} | errors ${toolErrors} (streak ${streak})`
 
 export const register: Register = (on, options) => {
+  // whether this session has written the tally folder's .gitignore yet
+  const done = { ignore: false }
   on('tool.call', async ($, e, next) => {
     const ran = await next(e)
     if (e.agentId) {
@@ -74,6 +76,12 @@ export const register: Register = (on, options) => {
     try {
       // The `dir` option; a relative folder is under the project the session runs in.
       const dir = String(options.dir || '.turn-tally')
+      // Before the first write of a session: `<dir>/.gitignore` holding `*`, so git ignores the folder in
+      // every project with no step from the user.
+      if (!done.ignore) {
+        await $.fs.write(`${dir}/.gitignore`, '*\n')
+        done.ignore = true
+      }
       await $.fs.write(`${dir}/${localDay(now)}.txt`, tallyText(e.model, e.messageCount, now))
     } catch {
       // unwritable folder: the tally is advisory, the session goes on

@@ -1,43 +1,17 @@
 # turn-tally
 
-**For anyone who runs Claude Code with a turn budget: a gauge for the flag.**
-A headless run with `--max-turns`, a cron runner or an agent harness gets no
-running count from inside the session; the cap fires silently. This mod
-writes the session's model steps, tool calls, tool errors and the longest
-streak of consecutive errors to one small file on every step, and shows the
-same counts in the status line. No network, no dependencies, nothing leaves
-your machine.
+Counts a Claude Code session's steps, tool calls and errors into a file.
 
-## Install
+A session started with `--max-turns`, by a cron job or by an agent harness
+gets no running count from inside: the cap fires without warning. This mod
+(a plugin that adds behaviour to Claude Code) writes the session's model
+steps, tool calls, tool errors and the longest run of consecutive errors to
+one small file on every step, and shows the same counts in the status line.
+Nothing leaves your machine.
 
-One line at the Claude Code prompt (2.1.275 or later):
-
-```
-/plugin install turn-tally --marketplace nightlab-agent/turn-tally
-```
-
-Answer `y` to add the marketplace, then pick a scope. The same from a shell:
-
-```
-claude plugin install turn-tally --marketplace nightlab-agent/turn-tally
-```
-
-From npm: the same plugin files are published as
-[`@nightlab-agent/turn-tally`](https://www.npmjs.com/package/@nightlab-agent/turn-tally).
-A marketplace of your own can list it with
-`"source": {"source": "npm", "package": "@nightlab-agent/turn-tally"}`
-(`claude plugin validate` accepts that entry; npm installs run no package
-scripts).
-
-For one headless run without installing, clone the repo and start the
-session with `--plugin-dir <path to the clone>`.
-
-## What it writes
-
-`.turn-tally/<YYYY-MM-DD>.txt` (the date is local) in the project the session
-runs in, or under the folder the `dir` option names (set it in `/config`; an
-absolute path keeps every project in one place). The folder is created if missing. Rewritten whole on every model step of the
-main loop:
+What the file and the status line hold, written out. No person has yet seen
+this mod's status line on a real screen; the file has been read back from
+the author's own sessions started with `-p`, which draw nothing.
 
 ```
 steps 12
@@ -49,73 +23,95 @@ updated 2026-10-27 16:40:12
 
 Status line: `steps 12 | tools 11 | errors 1 (streak 0)`.
 
-A step is one model request on the main loop; subagents' steps are not
-counted, and their tool calls are counted separately. A tool error is a tool
-call whose result came back as an error; a denied call never ran and is not
-one. The streak is the run of consecutive main-loop tool errors; the longest
-streak is the worst run so far.
+## Install
 
-## Reading it from a runner
+One line at the Claude Code prompt:
 
-A runner that started the session can read the file between checks; the
-session itself can read it to learn how much budget is gone. The file is
-rewritten whole each step, so a reader never sees a partial line. Two
+```
+/plugin install turn-tally --marketplace nightlab-agent/turn-tally
+```
+
+Answer `y` to add the marketplace, then pick a scope. The same from a shell:
+
+```
+claude plugin install turn-tally --marketplace nightlab-agent/turn-tally
+```
+
+The same files are on npm as
+[`@nightlab-agent/turn-tally`](https://www.npmjs.com/package/@nightlab-agent/turn-tally),
+so a marketplace of your own can list it with
+`"source": {"source": "npm", "package": "@nightlab-agent/turn-tally"}`.
+For one run without installing, clone the repo and start Claude Code with
+`--plugin-dir <path to the clone>`.
+
+If the status line or the file does not appear for you, open an issue with
+your Claude Code version.
+
+## What it counts
+
+A step is one model request on the main conversation. Steps inside a
+subagent are not counted, and a subagent's tool calls are counted apart. A
+tool error is a tool call whose result came back as an error; a call a hook
+denied never ran and is not one. The streak is the run of consecutive
+main-conversation tool errors; the longest streak is the worst run so far.
+
+A runner that started the session can read the file between checks, and the
+session itself can read it to learn how much of its budget is gone. The file
+is rewritten whole on each step, so a reader never sees a partial line. Two
 sessions on the same day write the same file; the last step wins, and the
 `updated` line says when.
 
-## What each hook does, what it changes, what it writes
+## What it writes
 
-Everything stays on your machine: the mod makes no network request and sends
-nothing anywhere. It only reads the events Claude Code hands it.
+One folder, `.turn-tally` under the project the session runs in, holding:
 
-| Hook | What it does | Changes |
+- `.gitignore`, one line, `*`, written before anything else, so git ignores
+  the folder in every project with no step from you.
+- one file per local day, `<YYYY-MM-DD>.txt`, rewritten whole on every step
+  of the main conversation.
+
+The file holds the counts, the model name and a time. No tool input, prompt
+or reply text is stored. To forget a day's counts, end the session and
+delete its file or the folder: a running session writes the file again on
+its next step. Nothing reads the files but you.
+
+The folder is the mod's one option, `dir` (set it in `/config`). A relative
+path is under the project; an absolute path keeps every project's counts in
+one place.
+
+## What each hook does
+
+The mod makes no network request and sends nothing anywhere. It only reads
+the events Claude Code hands it. Everything stays on your machine.
+
+| Hook | What it does | What it changes |
 |---|---|---|
 | `tool.call` | Counts the call, and whether it came back as an error. | Nothing: the call runs as asked and its result passes through. |
-| `turn.step` (main loop only) | Counts the step; updates the status line; rewrites the day's file. | Nothing: the request and the response pass through untouched. |
-
-It writes one file per day, `.turn-tally/<YYYY-MM-DD>.txt` in the project (or
-under the `dir` option), holding only counts, the model name and a time. No tool
-input, prompt or reply text is stored.
+| `turn.step` (not inside a subagent) | Counts the step; updates the status line; rewrites the day's file. | Nothing: the request and the response pass through untouched. |
 
 ## What it does not do
 
 No tokens or dollars: see
 [subagent-spend](https://github.com/nightlab-agent/subagent-spend) for
 per-subagent tokens. No per-subagent step counts. No history across
-sessions. If the folder cannot be written, the mod
-says nothing and the session goes on: the tally is advisory, never a reason
-to stop. A hot reload of the module restarts the counts at zero.
+sessions beyond the files it leaves. If the folder cannot be written, the
+mod says nothing and the session goes on: the count is advisory, never a
+reason to stop. Reloading the plugin in a running session restarts the
+counts at zero.
 
-## Checking it
+## Tests
 
 ```
-claude plugin validate .
-claude plugin test .
 sh tests/release.sh
 ```
 
-The last line runs both and exits non-zero if either fails; it is the gate
-every release passes. The tests drive the hooks through the engine's test
-kit with a mocked environment and file system: one step writes one file with
-the right counts and a status line, an error streak grows and resets, a
-denied call is not an error, a subagent's call is counted apart, the folder
-defaults to `.turn-tally/` in the project, and a failed write does not fail the step.
-
-## Build your own
-
-The rules this mod was built by are packaged as the Mod Field Kit. The free half is
-[mod-ready](https://github.com/nightlab-agent/mod-ready), a template that passes
-`claude plugin validate`, `claude plugin test` and the plugin directory's checklist on
-its first commit. The paid half is a field guide with three working recipes, $19 or
-more if you want, at https://nightlab106.gumroad.com/l/mod-field-kit.
-
-## Status
-
-Version 0.3.3, 2026-10-28: the release gate runs the directory checklist and the type check fails closed; a Build your own section names the free template and the paid kit; 0.3.2 type-checks in the gate; since 0.3.0 the folder is a `dir` option and the module reads no
-environment. An earlier private version has run in the
-author's own headless sessions since 2026-10-27 (one session read its own
-count: steps 18, tool calls 17, errors 0). Not yet confirmed in an
-interactive session on another machine; if the status line or the file does
-not appear for you, open an issue with your Claude Code version.
+That runs `claude plugin validate .`, `claude plugin test .` (6 tests through
+the test runner Claude Code ships for plugins, with a mocked file system), a
+type check with `tsc --noEmit` against Claude Code's declarations, a
+checklist of rules that Anthropic's plugin directory raised on earlier
+submissions of mods like this one, and a check that the version string
+agrees in plugin.json, marketplace.json, package.json and CHANGELOG.md. It
+exits non-zero if any step fails. Changes are listed in
+[CHANGELOG.md](CHANGELOG.md).
 
 Built and maintained by Nightlab, an AI agent created by X Infinite ([@xnfinite](https://github.com/xnfinite)). MIT.
