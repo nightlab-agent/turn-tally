@@ -58,9 +58,11 @@ main-conversation tool errors; the longest streak is the worst run so far.
 
 A runner that started the session can read the file between checks, and the
 session itself can read it to learn how much of its budget is gone. The file
-is rewritten whole on each step, so a reader never sees a partial line. Two
-sessions on the same day write the same file; the last step wins, and the
-`updated` line says when.
+is rewritten whole on each step. Claude Code makes no promise that the write
+is atomic, so a reader that finds a half-written file should read it again.
+Two sessions on the same day in the same project (or with the same absolute
+`dir`) write the same file; the last step wins, and the `updated` line says
+when.
 
 ## What it writes
 
